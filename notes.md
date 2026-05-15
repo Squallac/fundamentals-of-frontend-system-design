@@ -13,3 +13,9 @@ Cuando un elemento nuevo es creado, entra al formatting context actual, si ese e
 3. Predictability: A strict set of rules allows for consistent element positioning
 
 The block formatting context is set by default when an HTML page is initiated
+
+
+# Dom Templating Exercise
+The <template> tag stores HTML in a lightweight object in memory, which is not queryable by DOM API, not rendered in the final render tree, and allows for creating reusable HTML components
+
+Document fragments exist in memory and do not trigger reflow, allowing for efficient modifications without causing performance overhead in the DOM tree
