@@ -46,4 +46,38 @@ isIntersecting
 - What are the two parameters accepted by the Intersection Observer constructor?
 Callback function and config object
 
-coding branch `2-intersection-observer-begin`
+## Infinite scroll with intersection observer
+
+coding branch `2-intersection-observer-begin` y solucion `2-intersection-observer-end`
+
+- What method is used to minimize DOM mutations when adding new elements?
+Using a document fragment to accumulate DOM updates before appending them to the list in a single operation
+
+- What configuration parameter is set for the Intersection Observer?
+The threshold is set to 0.2, which means the callback will trigger when 20% of the observed element is visible
+
+- How is the page number tracked when fetching new data?
+A variable is initialized to 0 and incremented by 1 each time new data is fetched
+
+- What steps are involved in rendering new cards?
+Fetch new data using MockDB
+Create a document fragment
+Create card elements for each data item
+Append card elements to the fragment
+Append the entire fragment to the list container
+
+## Mutation observer
+- What is the primary purpose of the Mutation Observer in JavaScript?
+The Mutation Observer allows tracking changes within the DOM subtree, such as detecting modifications to child elements, attributes, or text content at a native level, which is particularly useful for applications like rich text editors.
+
+- What are the main configuration options for a Mutation Observer?
+The main configuration options are: childList (track direct child changes), attributes (track attribute modifications), characterData (track text content changes), and subtree (track changes across the entire subtree). Best practice is to configure these options carefully to avoid excessive callback invocations.
+
+- What properties does a Mutation Record provide?
+A Mutation Record provides properties including: type (mutation type like attribute change or element addition), target node (which triggered the mutation), added/removed nodes array, and old character data value for tracking changes in the DOM.
+
+- What advantage does a native Mutation Observer have over previous JavaScript-level implementations?
+A native Mutation Observer is implemented at the browser level, which makes it much faster and more memory-efficient compared to previous JavaScript-level polyfills that would create proxy objects to track mutations.
+
+- What happens if both 'childList' and 'subtree' options are set to true in a Mutation Observer?
+When both 'childList' and 'subtree' are set to true, the 'childList' option takes precedence, which means the subtree option will not work, and only direct child changes will be observed.
