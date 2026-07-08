@@ -85,6 +85,7 @@ coding branch `2-intersection-observer-begin` y solucion `2-intersection-observe
   When both 'childList' and 'subtree' are set to true, the 'childList' option takes precedence, which means the subtree option will not work, and only direct child changes will be observed.
 
 ### Mutation observer Exercise
+branch: ` 3-mutation-observer-start`
 - What attribute makes an HTML element editable by the user?
 content-editable="true"
 
@@ -115,3 +116,18 @@ Content box (tracks inner rectangle size) and border box (includes border and pa
 
 - Why does ResizeObserver return an array of boxes instead of a single box?
 The specification anticipates future HTML elements with multi-column layouts, allowing potential tracking of multiple boxes within a single element
+
+### Resize Observer Exercise 
+branch `4-resize-observer-start`
+
+- What is the primary purpose of using the ResizeObserver API?
+To track changes in element sizes and trigger callbacks when those sizes change, such as updating styles or layouts in a performant way, particularly useful for applications with multiple windows or dynamic content
+
+- What browser support does the Observer API currently have?
+The Observer API has approximately 98% client support, with the option to use a polyfill for the remaining 2% of clients
+
+- How do inline size and block size values change with different text rendering directions?
+The inline and block size values adapt based on text rendering settings like LTR (left-to-right), RTL (right-to-left), or vertical text, potentially swapping width and height tracking based on the rendering perspective
+
+- What is a recommended performance optimization strategy for MutationObserver?
+Provide specific configuration to track only necessary changes, filter out unnecessary attribute or node changes, and consider tracking mutations dynamically on specific elements rather than the entire document tree
