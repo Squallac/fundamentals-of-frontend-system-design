@@ -1,4 +1,4 @@
-import {intersectionObserver} from "../../../utils/observer.js";
+import { intersectionObserver } from '../../../utils/observer.js';
 
 /**
  * Standard Margin between cards
@@ -12,8 +12,8 @@ const MARGIN = 16;
  */
 const getObservers = () => [
     document.getElementById('top-observer'),
-    document.getElementById('bottom-observer')
-]
+    document.getElementById('bottom-observer'),
+];
 
 /**
  * Returns a virtual list container
@@ -44,7 +44,7 @@ function y(element, value = undefined) {
         element?.setAttribute('data-y', value);
     }
     const y = element?.getAttribute('data-y');
-    if(y !== '' && y != null && +y === +y) {
+    if (y !== '' && y != null && +y === +y) {
         return +y;
     }
     return null;
@@ -73,8 +73,10 @@ export class VirtualList {
      * }}
      */
     constructor(root, props) {
-        this.props = {...props};
+        this.props = { ...props };
         this.root = root;
+        this.start = 0;
+        this.end = 0;
     }
 
     /**
@@ -90,13 +92,24 @@ export class VirtualList {
          * Part 1 - App Skeleton
          *  @todo
          */
-        return ``.trim();
+        return `<div id="container">
+            <div id="top-observer">Top Observer</div>
+            <div id="virtual-list"></div>
+            <div id="bottom-observer">Bottom Observer</div>
+        </div>`.trim();
     }
 
     /**
      * @returns void
      */
     #effect() {
+        intersectionObserver(
+            getObservers(),
+            (entries) => this.#handleIntersectionObserver(entries),
+            {
+                threshold: 0.2,
+            },
+        );
     }
 
     /**
@@ -104,16 +117,35 @@ export class VirtualList {
      */
     render() {
         this.root.innerHTML = this.toHTML();
-        this.#effect()
+        this.#effect();
     }
 
     /**
      * Handles observer intersection entries
      * @param entries {IntersectionObserverEntry[]}
      */
-    #handleIntersectionObserver(entries) {}
+    #handleIntersectionObserver(entries) {
+        for (const entry of entries) {
+            if (entry.isIntersecting) {
+                if (entry.target.id === 'top-observer') {
+                    void this.#handleTopObserver();
+                } else {
+                    void this.#handleBottomObserver();
+                }
+            }
+        }
+    }
 
-    async #handleBottomObserver() {}
+    async #handleBottomObserver() {
+        const data = await this.props.getPage(this.end++);
+        const list = getVirtualList();
+        const fragment = new DocumentFragment();
+        for (const datum of data) {
+            const card = this.props.getTemplate(datum);
+            fragment.appendChild(card);
+        }
+        list.appendChild(fragment);
+    }
 
     async #handleTopObserver() {}
 
@@ -124,9 +156,7 @@ export class VirtualList {
      * @param elements {HTMLElement[]} - HTML Elements to update
      * @param data {T[]} - Data to use for update
      */
-    #updateData(elements, data) {
-
-    }
+    #updateData(elements, data) {}
 
     /**
      * Move elements on the screen using CSS Transform
@@ -136,7 +166,6 @@ export class VirtualList {
     #updateElementsPosition(direction) {
         const [top, bottom] = getObservers();
         if (direction === 'down') {
-
         } else if (direction === 'top') {
             // To implement
         }
