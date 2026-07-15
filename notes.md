@@ -139,3 +139,18 @@ branch `4-resize-observer-start`
 # Virtualization
 
 branch `5-1-virtualisation-skeleton-start`
+
+- What is virtualization in the context of web development?
+A UI optimization technique that maintains data in virtual memory while rendering only a limited subset of the data, minimizing DOM elements, reducing mutations, and decreasing CPU and memory usage
+
+- What are the two key observers in the virtualization technique?
+The top observer, which handles scrolling up, and the bottom observer, which handles scrolling down, with a viewport that triggers loading of new data when touching these observers
+
+- What is the primary goal of element recycling in virtualization?
+To reuse existing DOM elements when rendering new content, instead of creating new elements each time, which helps reduce memory usage and improve performance
+
+- What utility function is used to move elements around in the virtual list?
+The translateY function, which returns a CSS transformation to move elements vertically
+
+- What does the y() function do in the virtual list implementation?
+It sets or retrieves the 'data-y' attribute on an HTML element, converting the value to a number if a value is provided, or returning null if no value exists
