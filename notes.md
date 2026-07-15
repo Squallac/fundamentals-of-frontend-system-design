@@ -85,49 +85,57 @@ coding branch `2-intersection-observer-begin` y solucion `2-intersection-observe
   When both 'childList' and 'subtree' are set to true, the 'childList' option takes precedence, which means the subtree option will not work, and only direct child changes will be observed.
 
 ### Mutation observer Exercise
+
 branch: ` 3-mutation-observer-start`
+
 - What attribute makes an HTML element editable by the user?
-content-editable="true"
+  content-editable="true"
 
 - What are the key steps in creating a Mutation Observer?
-Create a mutation observer with a callback function, 2. Filter for specific mutation types, 3. Check target element and text content, 4. Replace element if conditions are met, 5. Observe the target element with configuration settings
+  Create a mutation observer with a callback function, 2. Filter for specific mutation types, 3. Check target element and text content, 4. Replace element if conditions are met, 5. Observe the target element with configuration settings
 
 - What mutation type is used to track typing or text changes in a Mutation Observer?
-characterData
+  characterData
 
 - What configuration property allows deep checking of DOM changes in a Mutation Observer?
-subtree: true
+  subtree: true
 
 - What method is used to replace an existing DOM element with a new element?
-replaceWith() method
+  replaceWith() method
 
 ## Resize Observer
+
 - What are the two main methods for handling changes when resizing a web page?
-CSS media queries and the resize event
+  CSS media queries and the resize event
 
 - Why is the resize event considered slow?
-Because it relies on standard DOM events, requires traversing the entire DOM tree, and can be fired up to 5,000 times during a small resize
+  Because it relies on standard DOM events, requires traversing the entire DOM tree, and can be fired up to 5,000 times during a small resize
 
 - What is the primary advantage of ResizeObserver over the resize event?
-ResizeObserver is approximately 10 times faster, supports callbacks, and can track multiple element resizes simultaneously
+  ResizeObserver is approximately 10 times faster, supports callbacks, and can track multiple element resizes simultaneously
 
 - What two box types can be used with ResizeObserver?
-Content box (tracks inner rectangle size) and border box (includes border and padding in resize calculations)
+  Content box (tracks inner rectangle size) and border box (includes border and padding in resize calculations)
 
 - Why does ResizeObserver return an array of boxes instead of a single box?
-The specification anticipates future HTML elements with multi-column layouts, allowing potential tracking of multiple boxes within a single element
+  The specification anticipates future HTML elements with multi-column layouts, allowing potential tracking of multiple boxes within a single element
 
-### Resize Observer Exercise 
+### Resize Observer Exercise
+
 branch `4-resize-observer-start`
 
 - What is the primary purpose of using the ResizeObserver API?
-To track changes in element sizes and trigger callbacks when those sizes change, such as updating styles or layouts in a performant way, particularly useful for applications with multiple windows or dynamic content
+  To track changes in element sizes and trigger callbacks when those sizes change, such as updating styles or layouts in a performant way, particularly useful for applications with multiple windows or dynamic content
 
 - What browser support does the Observer API currently have?
-The Observer API has approximately 98% client support, with the option to use a polyfill for the remaining 2% of clients
+  The Observer API has approximately 98% client support, with the option to use a polyfill for the remaining 2% of clients
 
 - How do inline size and block size values change with different text rendering directions?
-The inline and block size values adapt based on text rendering settings like LTR (left-to-right), RTL (right-to-left), or vertical text, potentially swapping width and height tracking based on the rendering perspective
+  The inline and block size values adapt based on text rendering settings like LTR (left-to-right), RTL (right-to-left), or vertical text, potentially swapping width and height tracking based on the rendering perspective
 
 - What is a recommended performance optimization strategy for MutationObserver?
-Provide specific configuration to track only necessary changes, filter out unnecessary attribute or node changes, and consider tracking mutations dynamically on specific elements rather than the entire document tree
+  Provide specific configuration to track only necessary changes, filter out unnecessary attribute or node changes, and consider tracking mutations dynamically on specific elements rather than the entire document tree
+
+# Virtualization
+
+branch `5-1-virtualisation-skeleton-start`
