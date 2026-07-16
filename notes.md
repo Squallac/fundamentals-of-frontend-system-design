@@ -140,17 +140,118 @@ branch `4-resize-observer-start`
 
 branch `5-1-virtualisation-skeleton-start`
 
+## Virtualization technique
+
 - What is virtualization in the context of web development?
-A UI optimization technique that maintains data in virtual memory while rendering only a limited subset of the data, minimizing DOM elements, reducing mutations, and decreasing CPU and memory usage
+  A UI optimization technique that maintains data in virtual memory while rendering only a limited subset of the data, minimizing DOM elements, reducing mutations, and decreasing CPU and memory usage
 
 - What are the two key observers in the virtualization technique?
-The top observer, which handles scrolling up, and the bottom observer, which handles scrolling down, with a viewport that triggers loading of new data when touching these observers
+  The top observer, which handles scrolling up, and the bottom observer, which handles scrolling down, with a viewport that triggers loading of new data when touching these observers
 
 - What is the primary goal of element recycling in virtualization?
-To reuse existing DOM elements when rendering new content, instead of creating new elements each time, which helps reduce memory usage and improve performance
+  To reuse existing DOM elements when rendering new content, instead of creating new elements each time, which helps reduce memory usage and improve performance
 
 - What utility function is used to move elements around in the virtual list?
-The translateY function, which returns a CSS transformation to move elements vertically
+  The translateY function, which returns a CSS transformation to move elements vertically
 
 - What does the y() function do in the virtual list implementation?
-It sets or retrieves the 'data-y' attribute on an HTML element, converting the value to a number if a value is provided, or returning null if no value exists
+  It sets or retrieves the 'data-y' attribute on an HTML element, converting the value to a number if a value is provided, or returning null if no value exists
+
+## Coding from scratch
+
+- What are the main components of the HTML structure being created?
+  The structure includes a container, top-observer element, virtual-list, and bottom-observer element
+
+- What configuration parameter is set for the intersection observer?
+  The threshold is set to 20%
+
+- What two cases are being handled in the intersection observer callback?
+  Checking the top-observer and bottom-observer elements, and determining if they are intersecting
+
+- What method is called when the bottom-observer is intersected?
+  handleBottomObserver method
+
+- When comparing getAttribute and dataset API for accessing data attributes, what is the key consideration?
+  It is mostly a matter of personal preference, with no clear technical advantage to either approach
+
+## Loading new data
+
+- What is the purpose of the 'getTemplate' function in a virtual list?
+  The getTemplate function accepts a single piece of data and returns a newly created HTML element, allowing the virtual list to work with generic HTML templates defined by the user
+
+- What is the difference between 'getTemplate' and 'updateTemplate' functions?
+  getTemplate creates a new HTML element for each data item, while updateTemplate modifies an existing element with new data instead of creating a completely new element
+
+- What are the two pointers used in managing the virtual list's state?
+  The start pointer and end pointer, which are used to track the current rendering window and incrementally load new pages of data
+
+- What is the concept of virtualization in this context?
+  Virtualization is a sliding window technique where only a specific subset of data is rendered at a time, with the ability to dynamically load more data as the user scrolls
+
+- What is the purpose of the page size property in the virtual list?
+  Specifies the number of elements to render per API call
+
+## Creating virtualization pool
+
+- What is the purpose of setting a limit for rendering elements in virtual scrolling?
+  To maintain a fixed number of elements in memory, preventing unlimited rendering and improving performance by keeping only two pages worth of elements at a time
+
+- What does the slicing operation do when managing the virtual memory array in virtual scrolling?
+  It splits the pool of elements into two halves: a 'recycle' half and an 'unchanged' half, allowing for efficient element reuse and memory management when scrolling
+
+- What are the two primary steps when updating elements during virtual scrolling?
+  First, swap the halves of the element pool in memory, and second, update the data content of the recyclable elements with newly fetched data
+
+- How is the limit for virtual scrolling typically calculated?
+  The limit is set as double the page size, which ensures that two complete pages of elements are always maintained in memory
+
+- What is the primary goal of the update data function in virtual scrolling?
+  To update the text content of recyclable elements with newly fetched data without physically moving the elements in the viewport
+
+## Recycling elements
+
+- How is the position of a card calculated during virtualization?
+  The position is calculated by taking the previous item's y position, adding its height, summing the margins, and then applying CSS transformation to position the card accordingly
+
+- What is the strategy for handling the first element's y position during virtualization?
+  The first element's y position is initialized to 0, allowing subsequent elements to calculate their positions based on previous elements
+
+- Why are elements moved to an absolute positioning context during virtualization?
+  To prevent the browser from rendering elements in normal flow and allow precise pixel-level positioning using CSS transformations
+
+- How do observers track the position of virtualized elements?
+  Observers are positioned based on the y position of the first and last elements in the pool, with top observer placed before the first element and bottom observer placed after the last element
+
+- What technique is used to efficiently move elements during virtualization?
+  GPU-accelerated CSS transformations using translateY, which moves elements to a separate stacking context without modifying the DOM
+
+## Virtualization pool QA
+
+- When is virtualization typically recommended?
+  Virtualization is recommended for mobile apps where memory usage needs to be minimized, such as social network apps or rendering tables with thousands of elements. It helps prevent overusing memory by rendering only a limited number of elements.
+
+- What is the key difference between virtualization and lazy loading?
+  In virtualization, a constant number of nodes is maintained (e.g., limit of 20 elements), while lazy loading allows appending new elements to the screen without recycling previously rendered elements.
+
+- What happens when position is set to absolute in terms of element positioning?
+  When position is set to absolute, all elements' positions are reset to the top-left most quarter. This allows for easier positioning using transformations and relative container references.
+
+- How does setting position to absolute affect the rendering pipeline?
+  When adjusting the position of absolute elements, it triggers a reflow. However, using transform can optimize the pipeline, triggering only the GPU pipeline without impacting the rendering thread, making it faster.
+
+## Handle top virtualization
+
+- What is the primary strategy for implementing top virtualization in this context?
+  Reverse the direction of rendering by moving elements from the top, exchanging array halves, and setting elements' positions relative to existing rendered items, starting from the end of the page size and moving backwards
+
+- How is the new y-position calculated for an element during top virtualization?
+  The new y-position is calculated by taking the next element's y-position, subtracting the margin twice, and then subtracting the current element's height
+
+- What condition prevents top intersection observation when scrolling to the very top of the list?
+  The top intersection observer should not be triggered when the start pointer is zero, which indicates no more elements can be virtualized from the top
+
+- How is the scroll bar height maintained during bottom scrolling?
+  By setting the container's height style to match the scrollHeight property, which ensures the scroll bar maintains its size when new elements are dynamically loaded
+
+- What is the key difference between bottom and top virtualization approaches?
+  In bottom virtualization, elements are added from the bottom, while in top virtualization, elements are added from the top by moving backwards through the array and calculating positions relative to existing rendered elements
