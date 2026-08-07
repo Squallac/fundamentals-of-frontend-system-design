@@ -255,3 +255,62 @@ branch `5-1-virtualisation-skeleton-start`
 
 - What is the key difference between bottom and top virtualization approaches?
   In bottom virtualization, elements are added from the bottom, while in top virtualization, elements are added from the top by moving backwards through the array and calculating positions relative to existing rendered elements
+
+
+# Application State & Network Connectivity
+
+## Application State Design
+What are the two key properties of UI state data?
+Data type/class and data properties. Data types can include app configuration, UI element state, or server data, while data properties include access level, read/write frequency, and size.
+
+What are the three general principles for designing application state?
+Minimize data access cost (aim for constant time access), 2. Optimize search operations, 3. Optimize memory usage by reducing unnecessary object storage
+
+What is data normalization and what are its primary goals?
+Data normalization is a concept from database design used to optimize how data is stored in UI applications. Its primary goals are: (1) provide optimized access performance, (2) create a unified, optimized structure for storing data, and (3) increase code readability and maintainability. It operates using normal forms (typically 1st, 2nd, and 3rd normal forms in UI apps) to systematically structure data.
+
+
+What are the three normal forms typically used in UI applications, and what does each form require?
+1st Normal Form: Every field should be atomic (reduce object nesting), flatten nested objects, and establish a primary key. 
+2nd Normal Form: All fields should depend on the entity's primary key. Fields that depend on other non-primary keys should be decoupled into separate tables/objects. 
+3rd Normal Form: Non-primary keys should depend only on the primary key (enforces stricter dependency than 2nd Normal Form - e.g., if department depends on job_id rather than the entity's primary key, move it to a separate table).
+
+What are the three types of storage APIs and their key characteristics?
+1. Session Storage: Stores small, non-persistent data for a single session only (wiped when the website is closed). Supports only string type and is synchronous (blocks UI thread). 
+2. Local Storage: Stores small data with persistence. Supports only string type and is synchronous (blocks UI thread), so not ideal for frequently read/written data. 
+3. IndexedDB: Supports large storage (around 3 GB), multiple data types, indexing, and is asynchronous (non-blocking), making it suitable for frequently accessed data.
+
+## Network Connectivity
+
+What are the two main network protocols discussed, and what is a key difference between them?
+UDP and TCP. UDP does not guarantee package delivery and can lose data, while TCP ensures full data delivery through a 3-way handshake and guarantees data integrity.
+
+What are the energy consumption implications of long polling on mobile devices?
+Long polling forces mobile devices to use a duplex network mode, which is not energy efficient. It can potentially drain a 2000mAh battery in almost four hours by maintaining an open socket.
+
+What are the key protocols built on top of TCP and UDP?
+On TCP: HTTP 1.1, HTTP 2, Server-Sent Events (SSE), and WebSockets (which use HTTP 1 for initial handshake then upgrade to pure TCP);
+On UDP: QUIC (developed by Google), WebRTC, and HTTP 3 (which is based on QUIC)
+
+What are the network inefficiencies of using long polling?
+Long polling requires establishing a new TCP socket for each request via a 3-way handshake, which is slow. Each request sends metadata headers with the request—in HTTP/1, headers are uncompressed and can be up to 50KB of overhead data. HTTP/2 compresses headers but still requires the 3-way handshake. On mobile devices, latency increases significantly when switching between network towers during travel, requiring connection reestablishment. Additionally, because HTTP requests are stateless, reconnection infrastructure must be implemented on the server side.
+
+
+In which scenarios is long polling most appropriate?
+Long polling is best suited for desktop applications where network bandwidth, latency, and energy consumption are not critical concerns. It is easy and cheap to implement with minimal infrastructure requirements. However, it should be avoided for mobile applications because it drains battery by maintaining TCP sockets open (which forces the mobile antenna into less efficient duplex mode), is network inefficient due to repeated headers and 3-way handshakes, and can have high latency when switching between network towers.
+
+## Server-sent events
+What is the key communication characteristic of Server-Sent Events (SSE)?
+Server-Sent Events use a unidirectional server-push technology where duplex communication is only used for the initial connection handshake, and the rest of the connection operates in receive-only mode with the server continuously pushing data to the client.
+
+What is a key advantage of Server-Sent Events in terms of infrastructure scaling?
+SSE allows easy horizontal scaling, where requests can be forwarded to different server instances without losing connection state, and you can always resume from the previous place
+
+What is a limitation of Server-Sent Events in terms of data transmission?
+Server-Sent Events can only push string data and do not support sending data from the client back to the server
+
+How does HTTP2 multiplexing improve connection efficiency in Server-Sent Events?
+HTTP2 multiplexing allows opening up to 200 requests within a single TCP socket, compared to traditional methods that require opening multiple TCP connections for different resources
+
+In what scenarios are Server-Sent Events particularly beneficial?
+SSE is beneficial for both desktop and mobile applications, provides performance comparable to WebSockets, and is especially useful for streaming large text data. It's particularly advantageous because reconnection is handled automatically at the protocol level, horizontal scaling is easier (can switch between server instances seamlessly), it's more battery-efficient for mobile devices, and it doesn't send unnecessary header overhead.
