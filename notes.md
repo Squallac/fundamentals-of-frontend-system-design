@@ -256,10 +256,10 @@ branch `5-1-virtualisation-skeleton-start`
 - What is the key difference between bottom and top virtualization approaches?
   In bottom virtualization, elements are added from the bottom, while in top virtualization, elements are added from the top by moving backwards through the array and calculating positions relative to existing rendered elements
 
-
 # Application State & Network Connectivity
 
 ## Application State Design
+
 What are the two key properties of UI state data?
 Data type/class and data properties. Data types can include app configuration, UI element state, or server data, while data properties include access level, read/write frequency, and size.
 
@@ -269,15 +269,15 @@ Minimize data access cost (aim for constant time access), 2. Optimize search ope
 What is data normalization and what are its primary goals?
 Data normalization is a concept from database design used to optimize how data is stored in UI applications. Its primary goals are: (1) provide optimized access performance, (2) create a unified, optimized structure for storing data, and (3) increase code readability and maintainability. It operates using normal forms (typically 1st, 2nd, and 3rd normal forms in UI apps) to systematically structure data.
 
-
 What are the three normal forms typically used in UI applications, and what does each form require?
-1st Normal Form: Every field should be atomic (reduce object nesting), flatten nested objects, and establish a primary key. 
-2nd Normal Form: All fields should depend on the entity's primary key. Fields that depend on other non-primary keys should be decoupled into separate tables/objects. 
+1st Normal Form: Every field should be atomic (reduce object nesting), flatten nested objects, and establish a primary key.
+2nd Normal Form: All fields should depend on the entity's primary key. Fields that depend on other non-primary keys should be decoupled into separate tables/objects.
 3rd Normal Form: Non-primary keys should depend only on the primary key (enforces stricter dependency than 2nd Normal Form - e.g., if department depends on job_id rather than the entity's primary key, move it to a separate table).
 
 What are the three types of storage APIs and their key characteristics?
-1. Session Storage: Stores small, non-persistent data for a single session only (wiped when the website is closed). Supports only string type and is synchronous (blocks UI thread). 
-2. Local Storage: Stores small data with persistence. Supports only string type and is synchronous (blocks UI thread), so not ideal for frequently read/written data. 
+
+1. Session Storage: Stores small, non-persistent data for a single session only (wiped when the website is closed). Supports only string type and is synchronous (blocks UI thread).
+2. Local Storage: Stores small data with persistence. Supports only string type and is synchronous (blocks UI thread), so not ideal for frequently read/written data.
 3. IndexedDB: Supports large storage (around 3 GB), multiple data types, indexing, and is asynchronous (non-blocking), making it suitable for frequently accessed data.
 
 ## Network Connectivity
@@ -295,11 +295,11 @@ On UDP: QUIC (developed by Google), WebRTC, and HTTP 3 (which is based on QUIC)
 What are the network inefficiencies of using long polling?
 Long polling requires establishing a new TCP socket for each request via a 3-way handshake, which is slow. Each request sends metadata headers with the request—in HTTP/1, headers are uncompressed and can be up to 50KB of overhead data. HTTP/2 compresses headers but still requires the 3-way handshake. On mobile devices, latency increases significantly when switching between network towers during travel, requiring connection reestablishment. Additionally, because HTTP requests are stateless, reconnection infrastructure must be implemented on the server side.
 
-
 In which scenarios is long polling most appropriate?
 Long polling is best suited for desktop applications where network bandwidth, latency, and energy consumption are not critical concerns. It is easy and cheap to implement with minimal infrastructure requirements. However, it should be avoided for mobile applications because it drains battery by maintaining TCP sockets open (which forces the mobile antenna into less efficient duplex mode), is network inefficient due to repeated headers and 3-way handshakes, and can have high latency when switching between network towers.
 
 ## Server-sent events
+
 What is the key communication characteristic of Server-Sent Events (SSE)?
 Server-Sent Events use a unidirectional server-push technology where duplex communication is only used for the initial connection handshake, and the rest of the connection operates in receive-only mode with the server continuously pushing data to the client.
 
@@ -314,3 +314,116 @@ HTTP2 multiplexing allows opening up to 200 requests within a single TCP socket,
 
 In what scenarios are Server-Sent Events particularly beneficial?
 SSE is beneficial for both desktop and mobile applications, provides performance comparable to WebSockets, and is especially useful for streaming large text data. It's particularly advantageous because reconnection is handled automatically at the protocol level, horizontal scaling is easier (can switch between server instances seamlessly), it's more battery-efficient for mobile devices, and it doesn't send unnecessary header overhead.
+
+## Web Sockets
+
+What are the main drawbacks of WebSockets?
+WebSockets are complex to maintain, resource-consuming, require significant server infrastructure investment, drain CPU and battery quickly, and are stateful with connection loss leading to data loss
+
+What are the primary use cases for WebSockets?
+Real-time communication scenarios such as machine sensor data collection, online gaming, trading with precise timing, and location tracking with need for high-frequency updates
+
+How does WebSocket initially establish its connection?
+The client sends a handshake request through HTTP/1, and the server responds with an upgrade response, allowing the protocol to transition from HTTP to TCP for communication
+
+What is a recommended alternative to WebSockets for chat applications?
+Use server-side events for receiving messages and standard HTTP POST requests for sending messages, which is more cost-effective and simpler to implement
+
+What protocol is recommended for handling media content?
+WebRTC is recommended for media content like videos, as server-side events are primarily suited for text-based data
+
+## Classic Rest and GraphQL
+
+Schema on page 232 of slides to check when to use GQL
+
+What are the potential drawbacks of introducing GraphQL in an application?
+Adding a new client library, introducing a new client caching layer, adding a state manager to sync client with server, and potentially increasing web bundle size
+
+When is REST preferred over GraphQL?
+In small applications, when building a public API, when most requests are read-only, with limited budget or team size, or when data transformation is complex
+
+What is an example of how GraphQL can simplify complex application architecture?
+In a trading app, GraphQL can encapsulate multiple data fetching methods (short polling, WebSockets, server-sent events) under a single subscription interface, providing a unified data retrieval approach
+
+What is an isomorphic type in the context of API design?
+Isomorphic types are server data types that are closely shared between clients, with very similar or identical structures
+
+What considerations should be made when deciding between REST and GraphQL?
+Consider application size, public API plans, read-only request ratio, team size, budget, data type compatibility, bundle size impact, and expected API model complexity
+
+# Web application performance
+** Hay un diagrama en la pagina 272 de slides sobre network performance **
+
+## Performance optimization
+
+What is LCP (Largest Contentful Paint) and what is its ideal performance target?
+LCP measures the loading performance of a web app, with an ideal target of less than 2.5 seconds, preferably under two seconds.
+
+What are the key performance metrics for web applications?
+The three key performance metrics are:
+
+1. LCP (Largest Contentful Paint) - measures loading performance and should ideally be less than 2.5 seconds;
+2. INP (Interaction to Next Paint) - measures UI refresh responsiveness and should be less than 200 milliseconds;
+3. CLS (Cumulative Layout Shift) - measures visual stability and should be less than 0.1
+
+What are the limitations of HTTP/1 regarding network connections?
+HTTP/1 initially allowed only one request in parallel, and browsers later expanded this to five TCP connections per domain, which could cause queuing for websites with numerous resources
+
+What is multiplexing in HTTP/2, and how does it improve performance?
+Multiplexing in HTTP/2 allows establishing a single TCP connection that can handle up to 200 parallel streams for loading data. This is achieved because HTTP/2 uses a binary protocol that can split a channel into multiple streams to transfer byte data. This is far more efficient than HTTP/1's approach of requiring multiple TCP connections (limited to 5) to load resources in parallel.
+
+What performance metrics should be targeted for web applications?
+Ideally, INP should be less than 200 milliseconds, CLS should be less than 0.1, and LCP should be under 2.5 seconds
+
+## Javascript bundling and loading
+
+What is the compression efficiency improvement from HTTP/1 to HTTP/2 for headers?
+HTTP/2 reduces header size by 98%, from 5 kilobytes to just 12 bytes
+
+What are the two main compression algorithms for web assets?
+Gzip and Brotli, with Brotli being 20-30% more efficient on average
+
+What is the purpose of the defer attribute when loading scripts?
+To load non-critical scripts after the page has finished rendering, improving first screen loading performance
+
+Why might you configure your JavaScript compiler to create multiple bundles (e.g., ES5, ES10, ES2024) for different ECMAScript versions?
+Since modern ECMAScript versions (ES6+, ES10+, ES12+) are supported by the vast majority of clients (90%+), serving polyfills to all users means most clients download unnecessary code. Creating multiple bundles allows the server to detect the browser's capabilities via user agent and serve an optimized bundle, reducing payload size for most users while still supporting older browsers.
+
+What are the two types of asset preloading techniques in web performance?
+Preload (high priority loading) and prefetch (background loading with lower priority)
+
+What is the average size reduction achieved through code minification?
+20%
+
+## CSS, Images and Rendering
+
+Summary of CSS optimizations:
+
+- Split the bundle whe necessary
+- Minify and compress
+- Inline critical resource
+- Non-critical resource can be downloaded on background
+
+Para imagenes hay una tabla de optimizacion en la pagina 265 de las slides con diferentes formatos.
+
+Summary images optimization:
+
+- Compress images for web
+- Use optimized formats
+- Use SVG PAth compression
+
+What compression techniques can significantly reduce the size of CSS libraries?
+Minification and compression techniques can reduce CSS library size dramatically. For example, Tailwind goes from 2.1 MB uncompressed to 1,900 KB minified, 200 KB when gzipped, and as low as 46 KB with Brotli compression.
+
+What is critical style extraction and why is it important?
+Critical style extraction involves inlining essential styles directly into the initial index.html request, allowing immediate content rendering and reducing network trips by avoiding additional HTTP requests for style assets.
+
+What are two methods for loading non-critical CSS styles?
+Two methods for loading non-critical CSS styles are: 1) Using the 'print' media type with an onload event to change to 'all', and 2) Using the preload parameter to load CSS under low priority.
+
+What are the recommended image formats for web optimization?
+Recommended image formats include: WebP for raster graphics (97% client support), AVIF for photo content (93% client support), SVG for icons and logos, and MP4 or WebP for animated content instead of GIF.
+
+How can font loading be optimized to improve web performance?
+Use font-display options like 'fallback' or 'optional' to render unstyled text immediately instead of waiting three seconds for font loading, and implement runtime font switching when the font becomes available.
+
