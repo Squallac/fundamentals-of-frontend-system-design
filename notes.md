@@ -427,3 +427,41 @@ Recommended image formats include: WebP for raster graphics (97% client support)
 How can font loading be optimized to improve web performance?
 Use font-display options like 'fallback' or 'optional' to render unstyled text immediately instead of waiting three seconds for font loading, and implement runtime font switching when the font becomes available.
 
+# System Design Interview
+## Req and mockup
+- Keep req simple, if you cant finish the exercise won't look good.
+
+- What are the two key characteristics of the news feed design?
+Stories are loaded dynamically and there is an unlimited number of stories
+
+- What technique is used to optimize rendering of an infinite list of stories?
+Virtualization, which involves using absolute positioning, CSS transformations, and registering top and bottom observers
+
+- What are the non-functional requirements for the news feed app?
+Works on mobile and desktop, network efficient (supports slow 3G), CPU and memory efficient, and provides offline support
+
+- How is the sliding window maintained in memory for the virtualized list?
+By moving start and end pointers to load new chunks of data while keeping previously loaded data cached in the global state
+
+## App state and API
+- What are the three parameters the GET stories endpoint can accept?
+The parameters are: (1) API token, (2) limit of items to load, and (3) previous page pointer
+
+- What are the main drawbacks of short polling?
+Short polling causes battery drain (including by utilizing the duplex antenna on mobile devices and keeping TCP sockets open), has connection latency issues, and requires infrastructure to handle reconnections
+
+## Optimizing performance
+- What compression technique provides around 85% compression?
+Gzip
+
+- What is recommended for loading images on websites to optimize performance?
+Use WebP format with a JPEG fallback. Additionally, consider using an image optimization service that compresses images for specific viewports to ensure you're not loading images that are too large for the screen.
+
+- What technique can help maintain constant memory usage when rendering large lists?
+Virtualization
+
+- What browser API allows executing jobs during idle time?
+requestIdleCallback - a browser API that schedules work to be executed during idle periods when the browser is not rendering, without blocking the UI thread.
+
+- What browser technology can cache assets and enable offline usage?
+Service worker - a background worker that intercepts network requests and caches assets (HTML, CSS, images) in IndexDB, allowing the application to serve resources from cache when offline
